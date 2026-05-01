@@ -1,7 +1,7 @@
 {
-  "name": "render-http-relay",
+  "name": "gcp-xhttp-relay",
   "version": "1.0.0",
-  "description": "Simple HTTP relay for 3x-ui panel",
+  "description": "HTTP relay for your own upstream service (Google Cloud Run)",
   "private": true,
   "license": "MIT",
   "scripts": {
