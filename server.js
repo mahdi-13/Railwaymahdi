@@ -3,7 +3,6 @@ const { Readable } = require("stream");
 
 const TARGET_BASE = (process.env.TARGET_DOMAIN || "").replace(/\/$/, "");
 
-// هدرهایی که نباید به سرور اصلی فرستاده شوند
 const STRIP_HEADERS = new Set([
   "host",
   "connection",
@@ -27,7 +26,6 @@ if (TARGET_BASE) {
     try {
       const targetUrl = TARGET_BASE + req.originalUrl;
 
-      // ساخت هدرهای جدید
       const headers = new Headers();
       let clientIp = null;
 
@@ -55,8 +53,8 @@ if (TARGET_BASE) {
         redirect: "manual",
       };
 
-      // فقط متدهایی که بدنه دارند، body رو ارسال کن
       if (req.method !== "GET" && req.method !== "HEAD") {
+        // بدنه‌ی خام درخواست را مستقیماً stream می‌کنیم
         fetchOptions.body = Readable.toWeb(req);
       }
 
@@ -83,25 +81,24 @@ if (TARGET_BASE) {
     }
   });
 } else {
-  // صفحه راهنما در صورتی که متغیر تنظیم نشده باشد
   app.get("*", (req, res) => {
     res.send(`<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Render Relay</title>
+    <title>Google Cloud Relay</title>
   </head>
   <body>
-    <h1>Render Relay</h1>
+    <h1>Google Cloud Relay</h1>
     <p>Environment variable <code>TARGET_DOMAIN</code> is not set.</p>
-    <p>Please configure it in Render Dashboard → your service → Environment Variables.</p>
+    <p>Please configure it to your upstream service (e.g., <code>https://api.example.com</code>)</p>
   </body>
-  </html>`);
+</html>`);
   });
 }
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080; // Cloud Run پورت 8080 را به‌عنوان PORT ارسال می‌کند
 app.listen(port, () => {
   console.log(`Relay server running on port ${port}`);
 });
